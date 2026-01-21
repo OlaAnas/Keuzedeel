@@ -12,12 +12,19 @@ class StudentController extends Controller
     /**
      * Show list of all students.
      */
-    public function index()
+    public function index(Request $request)
     {
         $students = User::where('role', 'student')
             ->with('study')
             ->orderBy('first_name')
-            ->paginate(10);
+            ->paginate(20);
+
+        // If AJAX request, return only the table rows
+        if ($request->ajax()) {
+            return view('admin.students.partials.table-rows', [
+                'students' => $students,
+            ]);
+        }
 
         return view('admin.students.index', [
             'students' => $students,
