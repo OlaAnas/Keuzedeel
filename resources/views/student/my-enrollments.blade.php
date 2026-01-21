@@ -27,7 +27,7 @@
     <!-- Current Enrollment -->
     @if($enrollment)
         <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="margin: 0 0 1rem 0; color: #333;">Huidigie Inschrijving - {{ $openPeriod->name }}</h2>
+            <h2 style="margin: 0 0 1rem 0; color: #333;">Huidige Inschrijving - {{ $openPeriod->name }}</h2>
 
             <div style="border: 2px solid #4caf50; border-radius: 8px; padding: 1.5rem; background: #f1f8f4; margin-bottom: 1.5rem;">
                 <div style="margin-bottom: 1rem;">
