@@ -13,21 +13,23 @@ class StudentController extends Controller
      */
     public function keuzedelen(Request $request)
     {
+        $user = auth()->user();
         $query = Keuzedeel::where('active', true)
             ->with(['teacher', 'study']);
 
-        // Filter by study if provided
-        if ($request->has('study_id') && $request->study_id !== null) {
-            $query->where('study_id', $request->study_id);
+        // Only show keuzedelen from the student's own study
+        if ($user->study_id) {
+            $query->where('study_id', $user->study_id);
         }
 
         $keuzedelen = $query->get();
-        $studies = Study::orderBy('name')->get();
+        
+        // Get the student's study for display
+        $studentStudy = $user->study;
 
         return view('student.keuzedelen', [
             'keuzedelen' => $keuzedelen,
-            'studies' => $studies,
-            'selectedStudy' => $request->study_id,
+            'studentStudy' => $studentStudy,
         ]);
     }
 
@@ -36,7 +38,13 @@ class StudentController extends Controller
      */
     public function keuzedelenDetail($id)
     {
+        $user = auth()->user();
         $keuzedeel = Keuzedeel::findOrFail($id);
+
+        // Ensure student can only view keuzedelen from their own study
+        if ($keuzedeel->study_id !== $user->study_id) {
+            abort(403, 'Je hebt geen toegang tot dit keuzedeel.');
+        }
 
         return view('student.keuzedeel-detail', [
             'keuzedeel' => $keuzedeel,

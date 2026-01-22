@@ -67,4 +67,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    /**
+     * Get the waitlist entries for this user.
+     */
+    public function waitlists()
+    {
+        return $this->hasMany(Waitlist::class);
+    }
 }

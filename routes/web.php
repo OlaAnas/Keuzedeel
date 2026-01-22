@@ -48,6 +48,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/enrollments', [\App\Http\Controllers\Admin\EnrollmentController::class, 'index'])->name('admin.enrollments');
     Route::patch('/enrollments/{id}/cancel', [\App\Http\Controllers\Admin\EnrollmentController::class, 'cancel'])->name('admin.enrollments.cancel');
     Route::patch('/enrollments/{id}/restore', [\App\Http\Controllers\Admin\EnrollmentController::class, 'restore'])->name('admin.enrollments.restore');
+
+    Route::get('/waitlists', [\App\Http\Controllers\Admin\WaitlistController::class, 'index'])->name('admin.waitlists');
+    Route::patch('/waitlists/{id}/approve', [\App\Http\Controllers\Admin\WaitlistController::class, 'approve'])->name('admin.waitlists.approve');
+    Route::patch('/waitlists/{id}/reject', [\App\Http\Controllers\Admin\WaitlistController::class, 'reject'])->name('admin.waitlists.reject');
 });
 
 // Student routes

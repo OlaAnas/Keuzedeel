@@ -26,6 +26,9 @@
                 <a href="{{ route('admin.enrollments') }}" style="padding: 1.5rem; background: #e3f2fd; border-radius: 8px; text-decoration: none; color: #1976d2; text-align: center; font-weight: 500;">
                     📝 Inschrijvingen
                 </a>
+                <a href="{{ route('admin.waitlists') }}" style="padding: 1.5rem; background: #fff3cd; border-radius: 8px; text-decoration: none; color: #856404; text-align: center; font-weight: 500;">
+                    ⏳ Wachtlijst
+                </a>
             </div>
         </div>
     </div>

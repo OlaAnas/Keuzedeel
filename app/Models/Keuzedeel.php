@@ -59,4 +59,12 @@ class Keuzedeel extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    /**
+     * Get all waitlist entries for this keuzedeel.
+     */
+    public function waitlists(): HasMany
+    {
+        return $this->hasMany(Waitlist::class);
+    }
 }

@@ -7,26 +7,17 @@
     <div class="content">
         <h2>Beschikbare Keuzedelen</h2>
         
-        <!-- Filter by Study -->
-        <div style="margin-bottom: 2rem; background: #f9f9f9; padding: 1rem; border-radius: 4px;">
-            <form method="GET" action="{{ route('student.keuzedelen') }}" style="display: flex; gap: 1rem; align-items: flex-end;">
-                <div style="flex: 1;">
-                    <label for="study_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Filter by Study:</label>
-                    <select id="study_id" name="study_id" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
-                        <option value="">-- All Studies --</option>
-                        @foreach($studies as $study)
-                            <option value="{{ $study->id }}" {{ $selectedStudy == $study->id ? 'selected' : '' }}>
-                                {{ $study->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" style="background-color: #1976d2; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer;">Filter</button>
-                @if($selectedStudy)
-                    <a href="{{ route('student.keuzedelen') }}" style="background-color: #666; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; text-decoration: none; display: inline-block;">Clear</a>
-                @endif
-            </form>
-        </div>
+        <!-- Study Information -->
+        @if($studentStudy)
+            <div style="margin-bottom: 2rem; background: #e3f2fd; padding: 1rem; border-radius: 4px; border-left: 4px solid #1976d2;">
+                <p style="margin: 0; color: #1976d2; font-weight: 600;">
+                    📚 Je volgt: <strong>{{ $studentStudy->name }}</strong>
+                </p>
+                <p style="margin: 0.5rem 0 0 0; color: #666; font-size: 0.9rem;">
+                    Je ziet alleen keuzedelen die beschikbaar zijn voor jouw opleiding.
+                </p>
+            </div>
+        @endif
 
         @if($keuzedelen->count() > 0)
             <div style="display: grid; gap: 1rem;">
@@ -48,12 +39,6 @@
                                     <strong>{{ $keuzedeel->teacher->first_name }} {{ $keuzedeel->teacher->last_name }}</strong>
                                 </div>
                             @endif
-                            @if($keuzedeel->study)
-                                <div>
-                                    <span style="color: #999; font-size: 0.85rem;">Study</span><br>
-                                    <strong>{{ $keuzedeel->study->name }}</strong>
-                                </div>
-                            @endif
                             <div>
                                 <span style="color: #999; font-size: 0.85rem;">Capacity</span><br>
                                 <strong>{{ $keuzedeel->min_students }}-{{ $keuzedeel->max_students }}</strong>
@@ -72,7 +57,11 @@
             </div>
         @else
             <div class="empty-state">
-                <p>No keuzedelen available</p>
+                @if($studentStudy)
+                    <p>Geen keuzedelen beschikbaar voor {{ $studentStudy->name }}</p>
+                @else
+                    <p>Je hebt geen opleiding ingesteld. Neem contact op met de admin.</p>
+                @endif
             </div>
         @endif
     </div>

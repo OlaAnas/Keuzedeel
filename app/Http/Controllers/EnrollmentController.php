@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Enrollment;
 use App\Models\Keuzedeel;
 use App\Models\Period;
+use App\Models\Waitlist;
 use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
@@ -18,13 +19,13 @@ class EnrollmentController extends Controller
         $keuzedeel = Keuzedeel::findOrFail($keuzedelId);
 
         // 1. Check if keuzedeel is active
-        if (!$keuzedeel->active) {
+        if (! $keuzedeel->active) {
             return back()->with('error', 'Deze keuzedeel is niet actief.');
         }
 
         // 2. Check if there's an open enrollment period
         $openPeriod = Period::where('enrollment_open', true)->first();
-        if (!$openPeriod) {
+        if (! $openPeriod) {
             return back()->with('error', 'Inschrijving is gesloten.');
         }
 
@@ -32,23 +33,37 @@ class EnrollmentController extends Controller
         $existingEnrollment = Enrollment::where('user_id', $user->id)
             ->where('period_id', $openPeriod->id)
             ->where('status', '!=', 'cancelled')
+            ->with('keuzedeel')
             ->first();
 
         if ($existingEnrollment) {
-            return back()->with('error', 'Je mag maar 1 keuzedeel per periode.');
+            return back()->with('error', 'Je mag maar 1 keuzedeel per periode kiezen. Je bent al ingeschreven voor: '.$existingEnrollment->keuzedeel->name);
         }
 
-        // 4. Check if keuzedeel is full (max 30 students)
+        // 4. Check if keuzedeel is full (check against max_students)
         $enrolledCount = Enrollment::where('keuzedeel_id', $keuzedelId)
             ->where('period_id', $openPeriod->id)
             ->where('status', '!=', 'cancelled')
             ->count();
 
-        if ($enrolledCount >= 30) {
-            return back()->with('error', 'Keuzedeel is vol.');
+        if ($enrolledCount >= $keuzedeel->max_students) {
+            // 5. Add to waitlist instead
+            Waitlist::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'keuzedeel_id' => $keuzedelId,
+                    'period_id' => $openPeriod->id,
+                ],
+                [
+                    'preference_order' => 1,
+                    'status' => 'waiting',
+                ]
+            );
+
+            return back()->with('success', 'Keuzedeel is vol. Je bent op de wachtlijst geplaatst!');
         }
 
-        // 5. Create enrollment (vol=vol fairness - timestamp order)
+        // 6. Create enrollment (vol=vol fairness - timestamp order)
         Enrollment::create([
             'user_id' => $user->id,
             'keuzedeel_id' => $keuzedelId,
@@ -56,7 +71,7 @@ class EnrollmentController extends Controller
             'status' => 'enrolled',
         ]);
 
-        return back()->with('success', 'Je bent ingeschreven voor ' . $keuzedeel->name);
+        return back()->with('success', 'Je bent ingeschreven voor '.$keuzedeel->name);
     }
 
     /**
@@ -84,7 +99,7 @@ class EnrollmentController extends Controller
         $user = auth()->user();
         $openPeriod = Period::where('enrollment_open', true)->first();
 
-        if (!$openPeriod) {
+        if (! $openPeriod) {
             $enrollment = null;
         } else {
             $enrollment = Enrollment::where('user_id', $user->id)
@@ -109,11 +124,11 @@ class EnrollmentController extends Controller
         $period = Period::findOrFail($periodId);
 
         // If opening a period, close all others
-        if (!$period->enrollment_open) {
+        if (! $period->enrollment_open) {
             Period::where('id', '!=', $period->id)->update(['enrollment_open' => false]);
         }
 
-        $period->update(['enrollment_open' => !$period->enrollment_open]);
+        $period->update(['enrollment_open' => ! $period->enrollment_open]);
 
         // If closing, apply minimum 15 rule
         if ($period->enrollment_open === false) {
@@ -121,7 +136,8 @@ class EnrollmentController extends Controller
         }
 
         $action = $period->enrollment_open ? 'geopend' : 'gesloten';
-        return back()->with('success', 'Inschrijving is ' . $action . '.');
+
+        return back()->with('success', 'Inschrijving is '.$action.'.');
     }
 
     /**
