@@ -180,32 +180,4 @@
         </div>
     </div>
 </div>
-
-<script>
-// Auto-refresh capacity info every 5 seconds
-setInterval(function() {
-    fetch('{{ route("student.keuzedeel-detail", $keuzedeel->id) }}')
-        .then(response => response.text())
-        .then(html => {
-            // Extract new values from the fetched HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            const newSpots = doc.getElementById('spotsAvailable')?.textContent || null;
-            const newEnrolled = doc.getElementById('enrolledSpots')?.textContent || null;
-            
-            if (newSpots !== null && newEnrolled !== null) {
-                // Update the page if values changed
-                const currentSpots = document.getElementById('spotsAvailable')?.textContent;
-                if (currentSpots !== newSpots) {
-                    document.getElementById('spotsAvailable').textContent = newSpots;
-                    document.getElementById('enrolledSpots').textContent = newEnrolled;
-                    // Optionally reload the full page for form updates
-                    location.reload();
-                }
-            }
-        })
-        .catch(error => console.log('Auto-refresh check: no changes'));
-}, 5000);
-</script>
 @endsection
