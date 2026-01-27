@@ -6,7 +6,7 @@
 <div class="container">
     <div class="content">
         <h2>Admin Dashboard</h2>
-        <p>Welcome back, Admin!</p>
+        <p>Welcome terug, Admin!</p>
         
         <div style="margin-top: 2rem;">
             <h3 style="color: #1976d2; margin-bottom: 1rem;">Quick Actions</h3>
