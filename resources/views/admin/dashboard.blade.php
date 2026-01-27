@@ -29,6 +29,9 @@
                 <a href="{{ route('admin.waitlists') }}" style="padding: 1.5rem; background: #fff3cd; border-radius: 8px; text-decoration: none; color: #856404; text-align: center; font-weight: 500;">
                     ⏳ Wachtlijst
                 </a>
+                <a href="/admin/export/users" style="padding: 1.5rem; background: #fff3cd; border-radius: 8px; text-decoration: none; color: #856404; text-align: center; font-weight: 500;">
+                    📊 Download Overview
+                </a>
             </div>
         </div>
     </div>
