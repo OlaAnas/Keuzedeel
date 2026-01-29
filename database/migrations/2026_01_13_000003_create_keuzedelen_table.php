@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->boolean('repeatable')->default(false);
             $table->foreignId('study_id')->nullable()->constrained();
-            $table->foreignId('teacher_id')->nullable()->constrained('users');
+            $table->foreignId('teacher_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
