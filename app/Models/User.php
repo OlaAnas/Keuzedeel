@@ -18,9 +18,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
         'name',
         'email',
         'password',
+        'role',
+        'student_number',
+        'study_id',
+        'class_name',
     ];
 
     /**
@@ -44,5 +50,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the study for this user.
+     */
+    public function study()
+    {
+        return $this->belongsTo(Study::class);
+    }
+
+    /**
+     * Get the enrollments for this user.
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Get the waitlist entries for this user.
+     */
+    public function waitlists()
+    {
+        return $this->hasMany(Waitlist::class);
     }
 }

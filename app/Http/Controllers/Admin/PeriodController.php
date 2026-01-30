@@ -40,14 +40,14 @@ class PeriodController extends Controller
         $period = Period::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:periods,name,'.$id,
+            'name' => 'required|string|max:255|unique:periods,name,' . $id,
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
         ]);
 
         $period->update($validated);
 
-        return redirect()->route('periods.index')
+        return redirect()->route('admin.periods.index')
             ->with('success', 'Periode bijgewerkt.');
     }
 
@@ -59,20 +59,19 @@ class PeriodController extends Controller
         $period = Period::findOrFail($id);
 
         // If opening, close all others
-        if (! $period->enrollment_open) {
+        if (!$period->enrollment_open) {
             Period::where('id', '!=', $period->id)->update(['enrollment_open' => false]);
         }
 
-        $period->update(['enrollment_open' => ! $period->enrollment_open]);
+        $period->update(['enrollment_open' => !$period->enrollment_open]);
 
         // If closing, apply minimum 15 rule
-        if (! $period->enrollment_open) {
+        if (!$period->enrollment_open) {
             $this->applyMinimum15Rule($period);
         }
 
         $action = $period->enrollment_open ? 'geopend' : 'gesloten';
-
-        return back()->with('success', 'Inschrijving is '.$action.'.');
+        return back()->with('success', 'Inschrijving is ' . $action . '.');
     }
 
     /**
