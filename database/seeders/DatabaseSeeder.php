@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
             SLBSeeder::class,
             StudySeeder::class,
             PeriodSeeder::class,
-            KeuzedelenSeeder::class,
         ]);
     }
 }

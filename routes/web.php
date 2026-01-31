@@ -16,6 +16,11 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Admin routes
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/export/users', [\App\Http\Controllers\Admin\ExportToExcelController::class, 'exportUsersExcel']);
+});
+
 // Dashboard redirect based on role
 Route::get('/dashboard', function () {
     return match (auth()->user()->role) {
@@ -37,11 +42,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::patch('/keuzedelen/{id}/toggle-active', [\App\Http\Controllers\Admin\KeuzedelController::class, 'toggleActive'])->name('admin.keuzedelen.toggle-active');
 
     Route::resource('teachers', \App\Http\Controllers\Admin\TeacherController::class);
-    
+
     Route::get('/students/import', [\App\Http\Controllers\Admin\StudentController::class, 'import'])->name('students.import');
     Route::post('/students/import', [\App\Http\Controllers\Admin\StudentController::class, 'storeImport'])->name('students.store-import');
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
-    
+
     Route::resource('periods', \App\Http\Controllers\Admin\PeriodController::class, ['only' => ['index', 'edit', 'update']]);
     Route::patch('/periods/{id}/toggle-enrollment', [\App\Http\Controllers\Admin\PeriodController::class, 'toggleEnrollment'])->name('periods.toggle-enrollment');
 
