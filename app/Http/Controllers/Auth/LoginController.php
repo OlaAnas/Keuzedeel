@@ -36,16 +36,7 @@ class LoginController extends Controller
         ]);
     }
 
-    /**
-     * Log the user out.
-     */
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/login');
-    }
+
 
     /**
      * Get the redirect path based on user role.

@@ -1,26 +1,20 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 
 Route::get('/', function () {
     return auth()->check() ? redirect('/dashboard') : redirect('/login');
 });
 
-// Auth routes
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-});
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
@@ -89,3 +83,5 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function (
         return view('teacher.dashboard');
     })->name('teacher.dashboard');
 });
+
+require __DIR__.'/auth.php';
